@@ -68,7 +68,6 @@ export class User {
       cpf: cpfValidator.format(this._cpf.toString().padStart(11, "0")),
       email: this.email,
       idade: this._age,
-      transactions: this._transactions,
     };
   }
 }
