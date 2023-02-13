@@ -3,7 +3,7 @@ import { TransactionsController } from "../controllers/transactions.controller";
 import { UserController } from "../controllers/user.controller";
 import { CpfValidatorMiddleware } from "../middlewares/cpf-validator.middleware";
 
-import { logMethodMiddleware, LogMiddleware } from "../middlewares/log.middleware";
+import { TransactionValidatorMiddleware } from "../middlewares/transaction-validator";
 import { UserValidatorMiddleware } from "../middlewares/user-validator.middleware";
 
 // http://localhost:4444/
@@ -37,34 +37,40 @@ export const userRoutes = () => {
   // POST http://localhost:4444/user/:id/transactions
   app.post(
     "/:userId/transactions",
-    UserValidatorMiddleware.validateMandatoryFields,
+    [
+      TransactionValidatorMiddleware.validateMandatoryFields,
+      TransactionValidatorMiddleware.validateUserExists,
+    ],
     new TransactionsController().create
   );
 
   // DELETE http://localhost:4444/user/:userId/transactions/:idTransaction
   app.delete(
     "/:userId/transactions/:idTransaction",
-    UserValidatorMiddleware.validateMandatoryFields,
+    TransactionValidatorMiddleware.validateUserExists,
     new TransactionsController().delete
   );
 
   //GET - Filtrar pelo id do user http://localhost:4444/user/:userId/transactions/   <-- via req.query
   app.get(
     "/:userId/transactions/",
-    UserValidatorMiddleware.validateMandatoryFields,
+    [TransactionValidatorMiddleware.validateUserExists],
     new TransactionsController().transactionExtract
   );
 
   //GET - Filtrar pelo ID da transaction - http://localhost:4444/user/:userId/transactions/:transactionId
   app.get(
     "/:userId/transactions/:transactionId",
-    UserValidatorMiddleware.validateMandatoryFields,
+    TransactionValidatorMiddleware.validateUserExists,
     new TransactionsController().listById
   );
 
   app.put(
     "/:userId/transactions/:idTransaction",
-    UserValidatorMiddleware.validateMandatoryFields,
+    [
+      TransactionValidatorMiddleware.validateUserExists,
+      TransactionValidatorMiddleware.validateMandatoryFields,
+    ],
     new TransactionsController().editTransaction
   );
 

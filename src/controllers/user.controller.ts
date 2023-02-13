@@ -116,7 +116,13 @@ export class UserController {
       const database = new UserDatabase();
       database.create(user);
 
-      return SuccessResponse.created(res, "User was successfully create", user);
+      return SuccessResponse.created(res, "User was successfully create", [
+        user.id,
+        user.name,
+        user.cpf,
+        user.email,
+        user.age,
+      ]);
     } catch (error: any) {
       return ServerError.genericError(res, error);
     }

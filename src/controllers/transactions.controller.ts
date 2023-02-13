@@ -58,7 +58,7 @@ export class TransactionsController {
         ok: true,
         message: "Transactions success created",
         data: user,
-        transactions: user.transactions,
+        // transactions: user.transactions,
       });
     } catch (error: any) {
       return res.status(500).send({
@@ -132,6 +132,14 @@ export class TransactionsController {
       }
 
       const alltransactions = user.transactions;
+      const transactionToJason = alltransactions.map((item) => {
+        return {
+          id: item.id,
+          title: item.title,
+          type: item.type,
+          value: item.value,
+        };
+      });
 
       if (title) {
         let filterTitle = alltransactions.find(
@@ -148,17 +156,17 @@ export class TransactionsController {
       }
 
       if (type) {
-        let filterType = alltransactions.find(
+        let filterType = alltransactions.filter(
           (transaction: Transactions) => transaction.type === type
         );
-        if (filterType!.type === filterType!.type) {
-          res.status(200).send({
-            ok: true,
-            message: "Type successfully obtained",
-            name: user.name,
-            data: filterType,
-          });
-        }
+
+        res.status(200).send({
+          ok: true,
+          message: "Type successfully obtained",
+          name: user.name,
+          data: filterType,
+        });
+
         RequestError.notFound(res, "Type");
       }
 
@@ -177,7 +185,7 @@ export class TransactionsController {
       let result = incomes - outcomes;
 
       return res.status(200).send({
-        transactions: alltransactions,
+        transactions: transactionToJason,
         balance: {
           income: incomes,
           outcome: outcomes,
